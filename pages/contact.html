@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact us — LoveLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+<nav class="nav scrolled">
+  <div class="container">
+    <a href="../index.html" class="logo">LoveLink</a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../index.html#pricing">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost">Log in</a>
+      <a href="signup.html" class="btn btn-primary">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<section style="padding-top:150px;">
+  <div class="container" style="max-width:520px;">
+    <h1 style="font-family:var(--font-display); font-size:36px; font-weight:500; margin-bottom:10px;">Get in touch</h1>
+    <p style="color:var(--text-muted); margin-bottom:32px;">Questions, feedback, or a safety concern — we read everything.</p>
+
+    <form id="contactForm">
+      <div class="form-message"></div>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="field">
+        <label for="topic">Topic</label>
+        <select id="topic" name="topic" style="width:100%; padding:13px 16px; border-radius:14px; border:1px solid var(--glass-border); background:var(--glass); color:var(--text-primary); font-size:15px;">
+          <option>General question</option>
+          <option>Billing</option>
+          <option>Report a profile</option>
+          <option>Partnership</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" style="width:100%; padding:13px 16px; border-radius:14px; border:1px solid var(--glass-border); background:var(--glass); color:var(--text-primary); font-size:15px; font-family:inherit;" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Send message</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-bottom">
+    <span>© 2026 LoveLink. All rights reserved.</span>
+    <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
+<script>
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const messageEl = form.querySelector('.form-message');
+  const btn = form.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  // Writes to a public.contact_messages table if you add one; otherwise
+  // wire this to an edge function / email service of your choice.
+  const { error } = await supabaseClient.from('contact_messages').insert({
+    name: form.name.value.trim(),
+    email: form.email.value.trim(),
+    topic: form.topic.value,
+    message: form.message.value.trim()
+  });
+
+  btn.disabled = false; btn.textContent = 'Send message';
+  messageEl.textContent = error ? 'Something went wrong — try again.' : 'Message sent — we\'ll get back to you soon.';
+  messageEl.className = 'form-message show ' + (error ? 'error' : 'success');
+  if (!error) form.reset();
+});
+</script>
+</body>
+</html>

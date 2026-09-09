@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — LoveLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+<link rel="stylesheet" href="../styles/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="../index.html" class="logo">LoveLink</a>
+    <nav>
+      <a href="dashboard.html"><span class="ic">🏠</span> Home</a>
+      <a href="discover.html"><span class="ic">🔍</span> Discover</a>
+      <a href="matches.html"><span class="ic">💜</span> Matches</a>
+      <a href="messages.html"><span class="ic">💬</span> Messages</a>
+      <a href="notifications.html"><span class="ic">🔔</span> Notifications</a>
+      <a href="profile-setup.html" class="active"><span class="ic">👤</span> My Profile</a>
+      <a href="premium.html"><span class="ic">✨</span> Go Premium</a>
+      <a href="admin/index.html" id="adminNavLink" class="hidden"><span class="ic">🛡️</span> Admin</a>
+      <a href="settings.html"><span class="ic">⚙️</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <img class="avatar" id="sidebarAvatar" alt="">
+      <div class="who"><strong id="sidebarName">Loading…</strong><span id="sidebarPlan">Free</span></div>
+      <button id="logoutBtn" title="Log out">⎋</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar">
+      <div>
+        <h1>My profile</h1>
+        <p>This is what other members see. Fill it out fully — complete profiles get more matches.</p>
+      </div>
+    </div>
+
+    <form id="profileForm" style="max-width:760px;">
+      <div class="form-message" style="display:block;"></div>
+
+      <h3 style="margin-bottom:16px;">Photos</h3>
+      <div class="photo-grid" id="photoGrid" style="margin-bottom:32px;"></div>
+
+      <h3 style="margin-bottom:16px;">Basics</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label for="full_name">Full name</label>
+          <input type="text" id="full_name" name="full_name" required>
+        </div>
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="e.g. jasleen_k">
+        </div>
+        <div class="field">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" min="18" max="100" required>
+        </div>
+        <div class="field">
+          <label for="height_cm">Height (cm)</label>
+          <input type="number" id="height_cm" name="height_cm" min="120" max="230">
+        </div>
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select</option>
+            <option value="female">Woman</option>
+            <option value="male">Man</option>
+            <option value="non_binary">Non-binary</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="relationship_goal">Looking for</label>
+          <select id="relationship_goal" name="relationship_goal">
+            <option value="">Select</option>
+            <option value="long_term">Long-term relationship</option>
+            <option value="casual">Something casual</option>
+            <option value="friendship">Friendship</option>
+            <option value="not_sure">Not sure yet</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field full" style="margin-top:18px;">
+        <label>Interested in</label>
+        <div class="chip-row" id="interestedInChips">
+          <button type="button" class="chip" data-value="female">Women</button>
+          <button type="button" class="chip" data-value="male">Men</button>
+          <button type="button" class="chip" data-value="non_binary">Non-binary</button>
+          <button type="button" class="chip" data-value="everyone">Everyone</button>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px;">About you</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label for="location_city">City</label>
+          <input type="text" id="location_city" name="location_city">
+        </div>
+        <div class="field">
+          <label for="occupation">Occupation</label>
+          <input type="text" id="occupation" name="occupation">
+        </div>
+        <div class="field">
+          <label for="education">Education</label>
+          <input type="text" id="education" name="education">
+        </div>
+        <div class="field">
+          <label for="languages">Languages (comma-separated)</label>
+          <input type="text" id="languages" name="languages" placeholder="Punjabi, Hindi, English">
+        </div>
+      </div>
+
+      <div class="field full">
+        <label for="hobbies">Hobbies (comma-separated)</label>
+        <input type="text" id="hobbies" name="hobbies" placeholder="Hiking, photography, cooking">
+      </div>
+
+      <div class="field full">
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio" maxlength="300" placeholder="Tell people what makes you, you."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <span style="font-size:13px; color:var(--text-faint);">Changes save to your profile only — nothing goes live until you save.</span>
+        <button type="submit" class="btn btn-primary">Save profile</button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
+<script src="../scripts/app-shell.js"></script>
+<script src="../scripts/profile.js"></script>
+</body>
+</html>

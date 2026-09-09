@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discover — LoveLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+<link rel="stylesheet" href="../styles/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="../index.html" class="logo">LoveLink</a>
+    <nav>
+      <a href="dashboard.html"><span class="ic">🏠</span> Home</a>
+      <a href="discover.html" class="active"><span class="ic">🔍</span> Discover</a>
+      <a href="matches.html"><span class="ic">💜</span> Matches</a>
+      <a href="messages.html"><span class="ic">💬</span> Messages</a>
+      <a href="notifications.html"><span class="ic">🔔</span> Notifications</a>
+      <a href="profile-setup.html"><span class="ic">👤</span> My Profile</a>
+      <a href="premium.html"><span class="ic">✨</span> Go Premium</a>
+      <a href="admin/index.html" id="adminNavLink" class="hidden"><span class="ic">🛡️</span> Admin</a>
+      <a href="settings.html"><span class="ic">⚙️</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <img class="avatar" id="sidebarAvatar" alt="">
+      <div class="who"><strong id="sidebarName">Loading…</strong><span id="sidebarPlan">Free</span></div>
+      <button id="logoutBtn" title="Log out">⎋</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar">
+      <div>
+        <h1>Discover</h1>
+        <p>Swipe right to like, left to pass, or tap ⭐ to super like.</p>
+      </div>
+    </div>
+
+    <div class="swipe-deck" id="swipeDeck">
+      <div class="deck-empty">
+        <div class="icon">💫</div>
+        <p>Loading people near you…</p>
+      </div>
+    </div>
+
+    <div class="swipe-actions">
+      <button class="swipe-btn pass" id="btnPass" title="Pass">✕</button>
+      <button class="swipe-btn super" id="btnSuper" title="Super Like">⭐</button>
+      <button class="swipe-btn like" id="btnLike" title="Like">♥</button>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
+<script src="../scripts/app-shell.js"></script>
+<script src="../scripts/discover.js"></script>
+</body>
+</html>
