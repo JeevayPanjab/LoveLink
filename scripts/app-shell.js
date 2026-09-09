@@ -64,3 +64,13 @@ function showToast(message) {
 }
 
 document.addEventListener('DOMContentLoaded', initAppShell);
+
+// Highlight the matching link in the mobile bottom nav (new — additive only)
+function highlightBottomNav() {
+  const current = window.location.pathname.split('/').pop() || 'dashboard.html';
+  document.querySelectorAll('.bottom-nav-list a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === current);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', highlightBottomNav);
