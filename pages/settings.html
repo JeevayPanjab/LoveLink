@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LoveLink">
+<meta name="theme-color" content="#0B0714">
+<title>Settings — LoveLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+<link rel="stylesheet" href="../styles/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="../index.html" class="logo">LoveLink</a>
+    <nav>
+      <a href="dashboard.html"><span class="ic">🏠</span> Home</a>
+      <a href="discover.html"><span class="ic">🔍</span> Discover</a>
+      <a href="matches.html"><span class="ic">💜</span> Matches</a>
+      <a href="messages.html"><span class="ic">💬</span> Messages</a>
+      <a href="notifications.html"><span class="ic">🔔</span> Notifications</a>
+      <a href="profile-setup.html"><span class="ic">👤</span> My Profile</a>
+      <a href="premium.html"><span class="ic">✨</span> Go Premium</a>
+      <a href="admin/index.html" id="adminNavLink" class="hidden"><span class="ic">🛡️</span> Admin</a>
+      <a href="settings.html" class="active"><span class="ic">⚙️</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <img class="avatar" id="sidebarAvatar" alt="">
+      <div class="who"><strong id="sidebarName">Loading…</strong><span id="sidebarPlan">Free</span></div>
+      <button id="logoutBtn" title="Log out">⎋</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar"><div><h1>Settings</h1><p>Control how your profile appears and behaves.</p></div></div>
+
+    <div style="max-width:520px; display:flex; flex-direction:column; gap:14px;">
+      <div class="feature-card" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3>Invisible mode</h3>
+          <p>Browse without appearing in other people's decks. <span style="color:var(--pink);">Platinum only.</span></p>
+        </div>
+        <input type="checkbox" id="invisibleToggle" style="width:20px; height:20px;">
+      </div>
+
+      <div class="feature-card" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3>Show distance</h3>
+          <p>Let matches see approximately how far away you are.</p>
+        </div>
+        <input type="checkbox" id="distanceToggle" checked style="width:20px; height:20px;">
+      </div>
+
+      <div class="feature-card">
+        <h3>Account</h3>
+        <p style="margin-bottom:14px;">Manage your account or step away for a while.</p>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost" id="deactivateBtn">Deactivate account</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
+<script src="../scripts/app-shell.js"></script>
+<script>
+(async function () {
+  const shell = await initAppShell();
+  if (!shell) return;
+
+  document.getElementById('deactivateBtn').addEventListener('click', async () => {
+    if (!confirm('This hides your profile from Discover until you log back in. Continue?')) return;
+    await supabaseClient.from('profiles').update({ onboarding_done: false }).eq('id', shell.session.user.id);
+    await supabaseClient.auth.signOut();
+    window.location.href = '../index.html';
+  });
+})();
+</script>
+</body>
+</html>

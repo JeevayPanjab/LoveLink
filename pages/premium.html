@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LoveLink">
+<meta name="theme-color" content="#0B0714">
+<title>Go Premium — LoveLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+<link rel="stylesheet" href="../styles/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="../index.html" class="logo">LoveLink</a>
+    <nav>
+      <a href="dashboard.html"><span class="ic">🏠</span> Home</a>
+      <a href="discover.html"><span class="ic">🔍</span> Discover</a>
+      <a href="matches.html"><span class="ic">💜</span> Matches</a>
+      <a href="messages.html"><span class="ic">💬</span> Messages</a>
+      <a href="notifications.html"><span class="ic">🔔</span> Notifications</a>
+      <a href="profile-setup.html"><span class="ic">👤</span> My Profile</a>
+      <a href="premium.html" class="active"><span class="ic">✨</span> Go Premium</a>
+      <a href="admin/index.html" id="adminNavLink" class="hidden"><span class="ic">🛡️</span> Admin</a>
+      <a href="settings.html"><span class="ic">⚙️</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <img class="avatar" id="sidebarAvatar" alt="">
+      <div class="who"><strong id="sidebarName">Loading…</strong><span id="sidebarPlan">Free</span></div>
+      <button id="logoutBtn" title="Log out">⎋</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar">
+      <div><h1>Upgrade your plan</h1><p>Unlock more likes, priority placement and advanced filters.</p></div>
+    </div>
+
+    <div class="plan-toggle">
+      <button class="active" data-cycle="monthly">Monthly</button>
+      <button data-cycle="yearly">Yearly — 2 months free</button>
+    </div>
+
+    <div class="pricing-grid" id="planGrid">
+      <div class="price-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-tag">Your current plan</div>
+        <div class="price">₹0<span> /mo</span></div>
+        <ul>
+          <li>10 likes per day</li>
+          <li>Limited matches</li>
+          <li>Standard chat</li>
+        </ul>
+        <button class="btn btn-ghost btn-block" disabled>Current plan</button>
+      </div>
+      <div class="price-card featured">
+        <div class="plan-name">Gold</div>
+        <div class="plan-tag">Most chosen</div>
+        <div class="price" data-monthly="₹499" data-yearly="₹4,990">₹499<span> /mo</span></div>
+        <ul>
+          <li>Unlimited likes</li>
+          <li>See who liked you</li>
+          <li>Unlimited chat</li>
+          <li>Priority profile placement</li>
+        </ul>
+        <button class="btn btn-primary btn-block" data-plan="gold" data-amount-monthly="49900" data-amount-yearly="499000">Upgrade to Gold</button>
+      </div>
+      <div class="price-card">
+        <div class="plan-name">Platinum</div>
+        <div class="plan-tag">For serious daters</div>
+        <div class="price" data-monthly="₹999" data-yearly="₹9,990">₹999<span> /mo</span></div>
+        <ul>
+          <li>Everything in Gold</li>
+          <li>Weekly profile boost</li>
+          <li>Invisible mode</li>
+          <li>Advanced filters</li>
+        </ul>
+        <button class="btn btn-ghost btn-block" data-plan="platinum" data-amount-monthly="99900" data-amount-yearly="999000">Upgrade to Platinum</button>
+      </div>
+    </div>
+
+    <p style="margin-top:24px; font-size:12px; color:var(--text-faint);">Payments are processed securely by Razorpay. LoveLink never stores your card details.</p>
+  </main>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
+<script src="../scripts/app-shell.js"></script>
+<script src="../scripts/payments.js"></script>
+</body>
+</html>

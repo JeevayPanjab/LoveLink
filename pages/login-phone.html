@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LoveLink">
+<meta name="theme-color" content="#0B0714">
+<title>Log in with phone — LoveLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/main.css">
+<style>.hidden { display: none; }</style>
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-visual">
+    <blockquote>
+      "No password to remember — just a code texted to my phone."
+      <cite>— A LoveLink member</cite>
+    </blockquote>
+  </div>
+
+  <div class="auth-form-wrap">
+    <div class="auth-form">
+      <a href="../index.html" class="logo">LoveLink</a>
+
+      <div id="phoneStep">
+        <h1>Continue with phone</h1>
+        <p>We'll text you a 6-digit code.</p>
+        <form id="phoneForm">
+          <div class="form-message"></div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+919812345678" required>
+            <div class="field-hint">Include your country code.</div>
+            <div class="field-error"></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Send code</button>
+        </form>
+      </div>
+
+      <div id="otpStep" class="hidden">
+        <h1>Enter the code</h1>
+        <p>Sent to <strong id="sentPhone"></strong></p>
+        <form id="otpForm">
+          <div class="form-message"></div>
+          <div class="field">
+            <div class="otp-row">
+              <input type="text" inputmode="numeric" maxlength="1">
+              <input type="text" inputmode="numeric" maxlength="1">
+              <input type="text" inputmode="numeric" maxlength="1">
+              <input type="text" inputmode="numeric" maxlength="1">
+              <input type="text" inputmode="numeric" maxlength="1">
+              <input type="text" inputmode="numeric" maxlength="1">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Verify & continue</button>
+        </form>
+      </div>
+
+      <p class="auth-switch">Prefer email? <a href="login.html">Log in with email</a></p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
+<script src="../scripts/auth.js"></script>
+<script>
+  requireGuest();
+  document.getElementById('phoneForm').addEventListener('submit', (e) => {
+    document.getElementById('sentPhone').textContent = document.getElementById('phone').value.trim();
+    handleSendOtp(e);
+  });
+  document.getElementById('otpForm').addEventListener('submit', handleVerifyOtp);
+</script>
+</body>
+</html>
