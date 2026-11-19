@@ -391,50 +391,57 @@
 /* Utility: hide element until JS reveals it (e.g. admin-only nav link) */
 .hidden { display: none !important; }
 
-/* -------------------------------- Mobile bottom nav (new) -------------------------------- */
+/* ==========================================================================
+   Mobile bottom navigation (injected by app-shell.js, phones/tablets only)
+   ========================================================================== */
 
-.bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 90;
-  background: var(--surface);
-  border-top: 1px solid var(--glass-border);
-  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
-}
-
-.bottom-nav-list {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.bottom-nav-list a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 6px 8px;
-  font-size: 10px;
-  color: var(--text-faint);
-  position: relative;
-}
-
-.bottom-nav-list a .ic { font-size: 19px; }
-.bottom-nav-list a.active { color: var(--pink); }
-
-.bottom-nav-list a .badge-count {
-  position: absolute;
-  top: 0; right: 2px;
-  background: var(--pink);
-  color: #fff;
-  font-size: 9px;
-  padding: 1px 5px;
-  border-radius: 999px;
-}
+.mobile-nav, .mobile-sheet, .mobile-sheet-backdrop { display: none; }
 
 @media (max-width: 960px) {
-  .bottom-nav { display: block; }
-  .app-main { padding-bottom: 88px; }
-}
+  .app-main { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+  .chat-shell { height: calc(100vh - 64px - 72px - env(safe-area-inset-bottom, 0px)); }
+  .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); right: 16px; left: 16px; text-align: center; }
 
+  .mobile-nav {
+    display: flex;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    z-index: 900;
+    background: var(--surface);
+    border-top: 1px solid var(--glass-border);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+  .mobile-nav a, .mobile-nav button {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    padding: 6px 2px;
+    background: none; border: 0; cursor: pointer;
+    font-family: inherit; font-size: 10.5px; font-weight: 500;
+    color: var(--text-muted);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-nav .ic { font-size: 20px; line-height: 1; }
+  .mobile-nav a.active { color: var(--pink); }
+
+  .mobile-sheet-backdrop.open {
+    display: block; position: fixed; inset: 0; z-index: 950; background: rgba(0,0,0,0.55);
+  }
+  .mobile-sheet.open {
+    display: flex; flex-direction: column; gap: 4px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 960;
+    background: var(--surface-raised);
+    border-top: 1px solid var(--glass-border);
+    border-radius: 20px 20px 0 0;
+    padding: 14px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+  .mobile-sheet .who { padding: 6px 10px 12px; font-size: 13px; color: var(--text-muted); }
+  .mobile-sheet .who strong { display: block; color: var(--text-primary); font-size: 15px; }
+  .mobile-sheet a, .mobile-sheet button {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 12px; border-radius: var(--border-radius-sm);
+    background: none; border: 0; width: 100%; text-align: left; cursor: pointer;
+    font-family: inherit; font-size: 15px; color: var(--text-primary);
+  }
+  .mobile-sheet a:active, .mobile-sheet button:active { background: var(--glass); }
+  .mobile-sheet .logout { color: var(--danger); }
+  .mobile-sheet .hidden { display: none !important; }
+}
