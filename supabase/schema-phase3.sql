@@ -64,6 +64,11 @@ create policy "Users can see matches they're part of"
 -- Called from the client via supabaseClient.rpc('record_swipe', {...}).
 -- security definer so it can insert a match row involving two different users.
 -- ----------------------------------------------------------------------------
+-- Demo users (seed accounts, is_demo = true) are added by
+-- supabase/seed-demo-profiles.sql. The column is added here too so
+-- record_swipe() never fails on a database where the seed was not run.
+alter table public.profiles add column if not exists is_demo boolean not null default false;
+
 create or replace function public.record_swipe(p_target_id uuid, p_type text)
 returns table (matched boolean)
 language plpgsql
@@ -75,6 +80,8 @@ declare
   v_reverse_exists boolean;
   v_user_a uuid;
   v_user_b uuid;
+  v_target_is_demo boolean;
+  v_swiper_is_demo boolean;
 begin
   insert into public.swipes (swiper_id, target_id, type)
   values (v_swiper, p_target_id, p_type)
@@ -83,6 +90,19 @@ begin
   if p_type = 'pass' then
     return query select false;
     return;
+  end if;
+
+  -- Demo auto-match: a like on a demo user counts as mutual, because demo
+  -- users never swipe. Record the reverse swipe so the normal mutual-like
+  -- path below creates the match. Never fires for demo-to-demo swipes.
+  if p_type in ('like', 'super_like') then
+    select is_demo into v_target_is_demo from public.profiles where id = p_target_id;
+    select is_demo into v_swiper_is_demo from public.profiles where id = v_swiper;
+    if coalesce(v_target_is_demo, false) and not coalesce(v_swiper_is_demo, false) then
+      insert into public.swipes (swiper_id, target_id, type)
+      values (p_target_id, v_swiper, 'like')
+      on conflict (swiper_id, target_id) do nothing;
+    end if;
   end if;
 
   select exists (

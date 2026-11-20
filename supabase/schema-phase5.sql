@@ -96,3 +96,35 @@ create policy "Admins can view all subscriptions"
 
 -- To make your own account an admin, run once (replace with your user id):
 -- update public.profiles set is_admin = true where id = 'YOUR-AUTH-USER-UUID';
+
+-- ----------------------------------------------------------------------------
+-- Fix 01 (2026-11-20): block admin self-grant.
+-- The "Users can update their own profile" policy has no column restriction,
+-- so any user could set is_admin = true on their own row. This trigger reverts
+-- is_admin unless the caller is already an admin (or there is no JWT, i.e.
+-- the SQL editor / service role). Deliberately minimal: all other columns
+-- behave exactly as before. Also enforced by migration
+-- fixes/01-block-admin-self-grant.sql on live databases.
+-- ----------------------------------------------------------------------------
+create or replace function public.prevent_admin_self_grant()
+returns trigger
+language plpgsql
+as $$
+begin
+  if auth.uid() is null or public.is_admin() then
+    return new;
+  end if;
+  if tg_op = 'UPDATE' then
+    new.is_admin := old.is_admin;
+  elsif tg_op = 'INSERT' then
+    new.is_admin := false;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_prevent_admin_self_grant on public.profiles;
+
+create trigger trg_prevent_admin_self_grant
+  before update or insert on public.profiles
+  for each row execute function public.prevent_admin_self_grant();
