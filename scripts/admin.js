@@ -122,7 +122,7 @@ document.querySelectorAll('.admin-tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.admin-tabs button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    ['users', 'reports', 'payments'].forEach(t => {
+    ['users', 'reports', 'payments', 'demoChats'].forEach(t => {
       document.getElementById(`tab${t[0].toUpperCase()}${t.slice(1)}`).style.display = t === btn.dataset.tab ? 'block' : 'none';
     });
   });

@@ -91,70 +91,6 @@ async function handleLogin(event) {
   window.location.href = 'dashboard.html';
 }
 
-/* ---------------------------- Google OAuth ---------------------------- */
-
-async function handleGoogleLogin() {
-  const { error } = await supabaseClient.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: `${window.location.origin}/pages/dashboard.html` }
-  });
-  if (error) console.error(error.message);
-}
-
-/* ---------------------------- Phone OTP ---------------------------- */
-
-async function handleSendOtp(event) {
-  event.preventDefault();
-  const form = event.target;
-  const messageEl = form.querySelector('.form-message');
-  const submitBtn = form.querySelector('button[type="submit"]');
-  const phone = form.phone.value.trim();
-
-  if (!/^\+\d{10,15}$/.test(phone)) {
-    setFieldError(form.phone.closest('.field'), 'Use international format, e.g. +919812345678.');
-    return;
-  }
-
-  setLoading(submitBtn, true, 'Sending code…');
-  const { error } = await supabaseClient.auth.signInWithOtp({ phone });
-  setLoading(submitBtn, false);
-
-  if (error) {
-    showMessage(messageEl, error.message, 'error');
-    return;
-  }
-
-  document.getElementById('otpStep')?.classList.remove('hidden');
-  document.getElementById('phoneStep')?.classList.add('hidden');
-  showMessage(messageEl, `Code sent to ${phone}.`, 'success');
-}
-
-async function handleVerifyOtp(event) {
-  event.preventDefault();
-  const form = event.target;
-  const messageEl = form.querySelector('.form-message');
-  const submitBtn = form.querySelector('button[type="submit"]');
-
-  const digits = Array.from(form.querySelectorAll('.otp-row input')).map(i => i.value).join('');
-  const phone = document.getElementById('sentPhone').textContent;
-
-  if (digits.length !== 6) {
-    showMessage(messageEl, 'Enter the full 6-digit code.', 'error');
-    return;
-  }
-
-  setLoading(submitBtn, true, 'Verifying…');
-  const { error } = await supabaseClient.auth.verifyOtp({ phone, token: digits, type: 'sms' });
-  setLoading(submitBtn, false);
-
-  if (error) {
-    showMessage(messageEl, 'Invalid or expired code.', 'error');
-    return;
-  }
-
-  window.location.href = 'dashboard.html';
-}
-
 /* ---------------------------- Forgot / reset password ---------------------------- */
 
 async function handleForgotPassword(event) {
@@ -202,18 +138,9 @@ async function handleResetPassword(event) {
   setTimeout(() => (window.location.href = 'login.html'), 1500);
 }
 
-/* ---------------------------- OTP input auto-advance ---------------------------- */
+/* ---------------------------- Clear field errors on input ---------------------------- */
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.otp-row input').forEach((input, idx, all) => {
-    input.addEventListener('input', () => {
-      if (input.value && all[idx + 1]) all[idx + 1].focus();
-    });
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !input.value && all[idx - 1]) all[idx - 1].focus();
-    });
-  });
-
   document.querySelectorAll('.field input').forEach((input) => {
     input.addEventListener('input', () => clearFieldError(input.closest('.field')));
   });

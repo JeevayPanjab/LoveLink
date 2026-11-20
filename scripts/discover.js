@@ -112,7 +112,7 @@ async function resolveSwipe(type) {
   if (type !== 'pass') {
     spawnHeartBurst(type === 'super_like' ? '⭐' : '💜');
   }
-  if (matchResult && matchResult.matched) {
+  if (matchResult?.[0]?.matched) {
     showToast("It's a match! 💜");
   }
 

@@ -86,6 +86,7 @@ async function openThread(otherId, otherName, itemEl) {
 
   document.getElementById('chatWindow').innerHTML = `
     <div class="chat-header">
+      <button class="chat-back" id="chatBack" type="button" aria-label="Back to conversations">←</button>
       <img class="avatar" id="chatAvatar" alt="">
       <div>
         <strong>${otherName || 'LoveLink member'}</strong>
@@ -99,6 +100,12 @@ async function openThread(otherId, otherName, itemEl) {
       <button id="chatSend">➤</button>
     </div>
   `;
+
+  // Phones: show the chat window; the back button returns to the list.
+  document.querySelector('.chat-shell')?.classList.add('thread-open');
+  document.getElementById('chatBack')?.addEventListener('click', () => {
+    document.querySelector('.chat-shell')?.classList.remove('thread-open');
+  });
 
   const { data: msgs } = await supabaseClient
     .from('messages')
