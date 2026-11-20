@@ -3,12 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="../manifest.json">
-<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="LoveLink">
-<meta name="theme-color" content="#0B0714">
 <title>Log in — LoveLink</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -48,13 +42,6 @@
         <button type="submit" class="btn btn-primary btn-block">Log in</button>
       </form>
 
-      <div class="divider">or continue with</div>
-
-      <div class="social-row">
-        <button class="social-btn" id="googleBtn" type="button">🔵 Google</button>
-        <a href="login-phone.html" class="social-btn">📱 Phone number</a>
-      </div>
-
       <p class="auth-switch">New to LoveLink? <a href="signup.html">Create an account</a></p>
     </div>
   </div>
@@ -66,7 +53,6 @@
 <script>
   requireGuest();
   document.getElementById('loginForm').addEventListener('submit', handleLogin);
-  document.getElementById('googleBtn').addEventListener('click', handleGoogleLogin);
 </script>
 </body>
 </html>
