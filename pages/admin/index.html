@@ -3,12 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="../../manifest.json">
-<link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="LoveLink">
-<meta name="theme-color" content="#0B0714">
 <title>Admin — LoveLink</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -46,6 +40,7 @@
       <button class="active" data-tab="users">Users</button>
       <button data-tab="reports">Reports</button>
       <button data-tab="payments">Payments</button>
+      <button data-tab="demoChats">Demo Chats</button>
     </div>
 
     <div id="tabUsers">
@@ -71,6 +66,30 @@
         <tbody id="paymentsBody"></tbody>
       </table>
     </div>
+
+    <div id="tabDemoChats" style="display:none;">
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">Conversations between demo users and real users. Replies are sent as the demo user — the admin account never appears in the chat.</p>
+      <div class="chat-shell" style="height:calc(100vh - 260px); min-height:480px;">
+        <div class="thread-list" id="demoThreadList" style="border-right:1px solid var(--glass-border); overflow-y:auto;"></div>
+        <div class="chat-window">
+          <div class="chat-header">
+            <button class="chat-back" id="demoChatBack" type="button" aria-label="Back to conversations">←</button>
+            <img class="avatar" id="demoChatAvatar" alt="">
+            <div>
+              <strong id="demoChatName">Select a conversation</strong>
+              <div class="status" id="demoChatSub"></div>
+            </div>
+          </div>
+          <div class="chat-messages" id="demoChatMessages">
+            <p style="color:var(--text-muted); font-size:13px;">Pick a conversation on the left to read it and reply as the demo user.</p>
+          </div>
+          <div class="chat-input-row hidden" id="demoChatInputRow">
+            <input type="text" id="demoChatInput" placeholder="Reply as the demo user…" autocomplete="off">
+            <button id="demoChatSend" title="Send">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -78,5 +97,6 @@
 <script src="../../scripts/supabase-client.js"></script>
 <script src="../../scripts/app-shell.js"></script>
 <script src="../../scripts/admin.js"></script>
+<script src="../../scripts/demo-chats.js"></script>
 </body>
 </html>
