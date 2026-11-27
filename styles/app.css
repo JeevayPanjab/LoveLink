@@ -459,3 +459,44 @@
   .mobile-sheet .logout { color: var(--danger); }
   .mobile-sheet .hidden { display: none !important; }
 }
+
+/* ==========================================================================
+   Static bottom nav (written into the app pages' HTML) + avatar fallback
+   ========================================================================== */
+
+/* The static bottom nav must never take part in the .app-shell grid: on
+   desktop it is hidden; on phones it is a fixed bottom bar. Otherwise it
+   steals a grid column and squeezes the main content into a ~200px strip
+   (and pushes the chat window off-screen). Scoped to .app-shell so the
+   landing page is untouched. */
+.app-shell .bottom-nav { display: none; }
+
+@media (max-width: 960px) {
+  .app-shell .bottom-nav {
+    display: block;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    z-index: 900;
+    background: var(--surface);
+    border-top: 1px solid var(--glass-border);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+  .app-shell .bottom-nav .bottom-nav-list { display: flex; }
+  .app-shell .bottom-nav a, .app-shell .bottom-nav button {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    padding: 6px 2px;
+    background: none; border: 0; cursor: pointer;
+    font-family: inherit; font-size: 10.5px; font-weight: 500;
+    color: var(--text-muted);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app-shell .bottom-nav .ic { font-size: 20px; line-height: 1; }
+  .app-shell .bottom-nav a.active { color: var(--pink); }
+}
+
+/* Initial-letter avatar fallback (no photo → no broken <img>) */
+.avatar-initial {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--gradient); color: #fff;
+  font-size: 15px; font-weight: 700;
+}
