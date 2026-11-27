@@ -42,7 +42,11 @@ function renderDeck() {
   }
 
   container.innerHTML = remaining.map((p, i) => {
-    const pos = remaining.length - 1 - i; // last in array = top card
+    // The FIRST profile in the window is the front card — the one the
+    // user sees and swipes. (Was: the last, so only the last profile
+    // ever became the front card, swiped cards reappeared, and the
+    // profiles before it never surfaced.)
+    const pos = i; // first in array = top card
     const layerClass = pos === 0 ? 'top' : pos === 1 ? 'behind-1' : 'behind-2';
     const photo = p.photo_urls?.[0];
     return `
