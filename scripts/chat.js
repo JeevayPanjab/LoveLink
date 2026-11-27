@@ -9,6 +9,14 @@ function urlParam(name) {
   return new URLSearchParams(window.location.search).get(name);
 }
 
+// Avatar with a fallback: an initial-letter disc when the profile has no
+// photo — an <img src=""> renders as a broken-image icon.
+function avatarHtml(name, url, cls) {
+  if (url) return `<img class="${cls}" src="${url}" alt="">`;
+  const initial = (name || 'L').trim().charAt(0).toUpperCase();
+  return `<span class="${cls} avatar-initial" aria-hidden="true">${initial}</span>`;
+}
+
 async function loadThreads() {
   const userId = currentSession.user.id;
 
@@ -53,9 +61,9 @@ async function loadThreads() {
 
   const container = document.getElementById('threadItems');
   container.innerHTML = threads.map(t => `
-    <div class="thread-item" data-id="${t.profile.id}" data-name="${t.profile.full_name || ''}">
+    <div class="thread-item" data-id="${t.profile.id}" data-name="${t.profile.full_name || ''}" data-photo="${t.profile.photo_urls?.[0] || ''}">
       <div class="avatar-wrap" style="position:relative;">
-        <img class="avatar" src="${t.profile.photo_urls?.[0] || ''}" alt="">
+        ${avatarHtml(t.profile.full_name, t.profile.photo_urls?.[0], 'avatar')}
         ${t.profile.is_online ? '<span class="online-dot"></span>' : ''}
       </div>
       <div class="meta">
@@ -103,6 +111,10 @@ async function openThread(otherId, otherName, itemEl) {
 
   // Phones: show the chat window; the back button returns to the list.
   document.querySelector('.chat-shell')?.classList.add('thread-open');
+  // The header avatar never had a src set — fill it from the thread item
+  // (photo URL), or an initial-letter avatar when there is no photo.
+  const headerAvatar = document.getElementById('chatAvatar');
+  if (headerAvatar) headerAvatar.src = itemEl?.dataset?.photo || avatarDataUri(otherName);
   document.getElementById('chatBack')?.addEventListener('click', () => {
     document.querySelector('.chat-shell')?.classList.remove('thread-open');
   });
