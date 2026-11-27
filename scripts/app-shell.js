@@ -24,7 +24,9 @@ async function initAppShell() {
 
   if (nameEl) nameEl.textContent = profile?.full_name || 'Your profile';
   if (planEl) planEl.textContent = profile?.is_premium ? 'Premium member' : 'Free plan';
-  if (avatarEl && profile?.photo_urls?.[0]) avatarEl.src = profile.photo_urls[0];
+  // No photo → initial-letter avatar (an <img> with no src shows a
+  // broken-image icon).
+  if (avatarEl) avatarEl.src = profile?.photo_urls?.[0] || avatarDataUri(profile?.full_name);
   if (greetingEl && profile?.full_name) {
     greetingEl.textContent = `Welcome back, ${profile.full_name.split(' ')[0]}`;
   }
@@ -50,6 +52,17 @@ async function initAppShell() {
   return { session: currentSession, profile };
 }
 
+// Data-URI SVG avatar with the person's initial — used when a profile has
+// no photo, so an <img> never gets an empty src (broken-image icon).
+// Defined here (app-shell.js loads before the page scripts that use it).
+function avatarDataUri(name) {
+  const initial = (name || 'L').trim().charAt(0).toUpperCase();
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72">'
+    + '<rect width="72" height="72" fill="#7B2FF7"/>'
+    + '<text x="36" y="48" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#fff" text-anchor="middle">' + initial + '</text></svg>';
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
 function showToast(message) {
   let toast = document.querySelector('.toast');
   if (!toast) {
@@ -69,36 +82,14 @@ document.addEventListener('DOMContentLoaded', initAppShell);
    Mobile bottom navigation + "More" sheet (with Log out).
    Built from the sidebar's own links so paths are right on every page
    (including pages/admin/). Does nothing if the page has no sidebar.
-   CSS only shows it on screens <= 960px, where the sidebar is hidden.
+   If the page already has a static bottom nav in its HTML, that nav is
+   used as the bar (only the "More" button + sheet are added) so phones
+   never get two bottom bars. CSS only shows it on screens <= 960px,
+   where the sidebar is hidden.
    --------------------------------------------------------------------------- */
-function injectMobileNav() {
-  const sidebar = document.querySelector('.sidebar');
-  if (!sidebar || document.getElementById('mobileNav')) return;
-
-  // Let iOS expose the bottom safe-area inset (home indicator)
-  const vp = document.querySelector('meta[name="viewport"]');
-  if (vp && !/viewport-fit/.test(vp.content)) vp.content += ', viewport-fit=cover';
-
-  const links = Array.from(sidebar.querySelectorAll('nav a'));
-  const mainFiles = ['dashboard.html', 'discover.html', 'matches.html', 'messages.html', 'profile-setup.html'];
-  const labels = { 'dashboard.html': 'Home', 'discover.html': 'Discover', 'matches.html': 'Matches', 'messages.html': 'Chats', 'profile-setup.html': 'Profile' };
-  const fileOf = (a) => (a.getAttribute('href') || '').split('/').pop();
-  const iconOf = (a) => (a.querySelector('.ic')?.textContent || '').trim();
-
-  const mainLinks = links.filter(a => mainFiles.includes(fileOf(a)));
-  // Admin pages have no main links — show their own sidebar links instead
-  const barLinks = mainLinks.length ? mainLinks : links;
-  const restLinks = mainLinks.length ? links.filter(a => !mainLinks.includes(a)) : [];
-
-  const nav = document.createElement('nav');
-  nav.id = 'mobileNav';
-  nav.className = 'mobile-nav';
-  nav.innerHTML = barLinks.map(a => `
-    <a href="${a.getAttribute('href')}" class="${a.classList.contains('active') ? 'active' : ''}">
-      <span class="ic">${iconOf(a)}</span><span>${labels[fileOf(a)] || a.textContent.replace(iconOf(a), '').trim()}</span>
-    </a>`).join('') + `
-    <button type="button" id="mobileMoreBtn" aria-label="More"><span class="ic">☰</span><span>More</span></button>`;
-
+// "More" sheet (remaining links + Log out) shared by the injected bar and
+// by a page's own static bottom nav.
+function attachMoreSheet(restLinks, iconOf) {
   const backdrop = document.createElement('div');
   backdrop.id = 'mobileSheetBackdrop';
   backdrop.className = 'mobile-sheet-backdrop';
@@ -111,7 +102,7 @@ function injectMobileNav() {
     ${restLinks.map(a => `<a href="${a.getAttribute('href')}" class="${a.classList.contains('hidden') ? 'hidden' : ''}" data-admin="${a.id === 'adminNavLink'}"><span class="ic">${iconOf(a)}</span> ${a.textContent.replace(iconOf(a), '').trim()}</a>`).join('')}
     <button type="button" class="logout" id="mobileLogoutBtn"><span class="ic">⎋</span> Log out</button>`;
 
-  document.body.append(nav, backdrop, sheet);
+  document.body.append(backdrop, sheet);
 
   const close = () => { sheet.classList.remove('open'); backdrop.classList.remove('open'); };
   document.getElementById('mobileMoreBtn').addEventListener('click', () => {
@@ -129,6 +120,62 @@ function injectMobileNav() {
     close();
     document.getElementById('logoutBtn')?.click();
   });
+}
+
+function injectMobileNav() {
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  // Let iOS expose the bottom safe-area inset (home indicator)
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp && !/viewport-fit/.test(vp.content)) vp.content += ', viewport-fit=cover';
+
+  const links = Array.from(sidebar.querySelectorAll('nav a'));
+  const mainFiles = ['dashboard.html', 'discover.html', 'matches.html', 'messages.html', 'profile-setup.html'];
+  const labels = { 'dashboard.html': 'Home', 'discover.html': 'Discover', 'matches.html': 'Matches', 'messages.html': 'Chats', 'profile-setup.html': 'Profile' };
+  const fileOf = (a) => (a.getAttribute('href') || '').split('/').pop();
+  const iconOf = (a) => (a.querySelector('.ic')?.textContent || '').trim();
+
+  const mainLinks = links.filter(a => mainFiles.includes(fileOf(a)));
+  // Admin pages have no main links — show their own sidebar links instead
+  const barLinks = mainLinks.length ? mainLinks : links;
+  const restLinks = mainLinks.length ? links.filter(a => !mainLinks.includes(a)) : [];
+
+  // The app pages already carry a static bottom nav in their HTML — use
+  // it as the bar instead of injecting a second one (two bars would
+  // double the bottom navigation on phones). Only the "More" button and
+  // its sheet are added to it.
+  const staticNav = document.querySelector('.app-shell .bottom-nav');
+  if (staticNav) {
+    if (document.getElementById('mobileMoreBtn')) return;
+    const current = window.location.pathname.split('/').pop();
+    staticNav.querySelectorAll('a').forEach(a => {
+      if (fileOf(a) === current) a.classList.add('active');
+    });
+    const list = staticNav.querySelector('.bottom-nav-list') || staticNav;
+    const moreBtn = document.createElement('button');
+    moreBtn.type = 'button';
+    moreBtn.id = 'mobileMoreBtn';
+    moreBtn.setAttribute('aria-label', 'More');
+    moreBtn.innerHTML = '<span class="ic">☰</span><span>More</span>';
+    list.appendChild(moreBtn);
+    attachMoreSheet(restLinks, iconOf);
+    return;
+  }
+
+  if (document.getElementById('mobileNav')) return;
+
+  const nav = document.createElement('nav');
+  nav.id = 'mobileNav';
+  nav.className = 'mobile-nav';
+  nav.innerHTML = barLinks.map(a => `
+    <a href="${a.getAttribute('href')}" class="${a.classList.contains('active') ? 'active' : ''}">
+      <span class="ic">${iconOf(a)}</span><span>${labels[fileOf(a)] || a.textContent.replace(iconOf(a), '').trim()}</span>
+    </a>`).join('') + `
+    <button type="button" id="mobileMoreBtn" aria-label="More"><span class="ic">☰</span><span>More</span></button>`;
+
+  document.body.append(nav);
+  attachMoreSheet(restLinks, iconOf);
 }
 
 document.addEventListener('DOMContentLoaded', injectMobileNav);
